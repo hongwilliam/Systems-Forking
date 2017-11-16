@@ -5,31 +5,31 @@
 
 
 int main(){
+  srand(time(NULL));
 
-  printf("pre-fork \n");
-  int f = -1;
-  printf("I'm the parent: %d \n\n", getpid());
-  f = fork();
-  if(f)
-    f = fork();
-  if (f == 0){
-    printf("I’m a child: %d \n", getpid());
-    srand(time(NULL));
+  printf("Pre-fork: I'm a parent and here is my PID: %d \n", getpid() );
+  int f1, f2;
+  f1 = fork();
+  if (f1 == 0){
+    printf("I’m child 1 and here is my PID: %d \t parent PID: %d\n", getpid(), getppid() );
     int r = (rand() % 16) + 5;
-    printf("Sleeping for %d secs...\n\n",r);
     sleep(r);
-    printf("Child is finished\n\n");
-    return r;
-  }
+    printf("Child 1 is finished\n");
+    return r; }
   else{
-    int status;
-    int c = wait(&status);
-    printf("Completed child: \t PID: %d \t Asleep for: %d secs \t \n", c, WEXITSTATUS(status));
-    printf("Parent is finished\n");
-    exit(0);
+    f2 = fork(); //forking off two chuld processes
+    if (f2 == 0){
+      printf("I’m child 2 and here is my PID: %d \t parent PID: %d\n", getpid(), getppid() );
+      rand(); //seed new rand
+      int r = (rand() % 16) + 5;
+      sleep(r);
+      printf("Child 2 is finished \n");
+      return r; }
+    else{
+        int status;
+        printf("Child process just finished, here is my PID: %d\t sleep time: %d \n", wait(&status), WEXITSTATUS(status));
+        printf("Parent process is done, end the program \n");
+        exit(0); }
   }
-
-
-
 
 }
